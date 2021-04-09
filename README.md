@@ -10,7 +10,7 @@ Besteht aus zwei unabhängigen Skripten.
 * Bietet die Möglichkeit Notifications via Datenpunkten zu senden.
 
 #2 AtrixController
-Sendet vordefinierte Notifications in bestimmten Intervallen. Z.b. Temperatur und Luftfeuchtigkeit alle x Minuten.
+* Sendet vordefinierte Notifications in bestimmten Intervallen. Z.b. Temperatur und Luftfeuchtigkeit alle x Minuten.
 
 ## Voraussetzung für beide Skripte
 Die Verbindung zur Awtrix via mqtt muß funktionierend eingerichtet sein.

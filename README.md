@@ -1,4 +1,4 @@
-# iobroker-awtrix - ALPHaVERSION
+# iobroker-awtrix - ALPHAVERSION
 Steuere Deine Awtrix via iobroker
 
 

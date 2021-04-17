@@ -35,7 +35,9 @@ Dies sind:
 Nachdem ihr das Skript in ein neues Js Projekt kopiert habt, solltet Ihr als erstes 
 müßt Ihr im Einstellungsbereich eure Datenpunkte für die einzelnen Funktionen eintragen. Habt Ihr irgendwelche  Datenpunkte nicht oder wollt die entsprechende Funktion nicht, lasst die Felder für die ObjektIds einfach leer, d.h. Ihr lasst nur die beiden " stehen, diese dürfen NICHT entfernt werden.
 
-
+**If you like it, please consider a donation:**
+                                                                          
+[![paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GGF786JBJNYRN&source=url) 
 
 ## Changelog Connector
 ### V0.1.0 (17.04.2021)

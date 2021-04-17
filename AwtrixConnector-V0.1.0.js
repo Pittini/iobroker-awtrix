@@ -1,12 +1,9 @@
-const SkriptVersion = "0.0.2"; //vom 7.4.2021 / Link zu Git: https://github.com/Pittini/iobroker-awtrix / Forum: 
+const SkriptVersion = "0.1.0"; //vom 17.4.2021 / Link zu Git: https://github.com/Pittini/iobroker-awtrix / Forum: 
 
 const praefix = "javascript.0.Awtrix1"; //Root für Skriptdatenpunkte
 const Awtrix1Root = 'mqtt.0.Awtrix1'; //Root für Awtrix Datenpunkte innerhalb mqtt
 
 const logging = true; //Logging aktivieren/deaktivieren
-
-
-
 
 
 // Ab hier nichts mehr ändern!

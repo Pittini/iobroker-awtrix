@@ -33,15 +33,12 @@ Dies sind:
 
 ## Installation Controller
 Nachdem ihr das Skript in ein neues Js Projekt kopiert habt, solltet Ihr als erstes 
-müßt Ihr im Einstellungsbereich eure Datenpunkte für die einzelnen Funktionen eintragen. Habt Ihr irgendwelche  Datenpunkte nicht oder wollt die entsprechende Funktion nicht, lasst die Felder für die ObjektIds einfach leer, d.h. Ihr lasst nur die beiden " stehen, diese dürfen NICHT entfernt werden. Das ganze sieht bei mir z.B. so aus:
+müßt Ihr im Einstellungsbereich eure Datenpunkte für die einzelnen Funktionen eintragen. Habt Ihr irgendwelche  Datenpunkte nicht oder wollt die entsprechende Funktion nicht, lasst die Felder für die ObjektIds einfach leer, d.h. Ihr lasst nur die beiden " stehen, diese dürfen NICHT entfernt werden.
 
-![tut1.png](/admin/tut1.png)   
 
-Für Euch relevant sind vorallem die Zeilen mit "oid", dies steht für ObjektId, eben hier müssen wie oben beschrieben Eure Datenpunkte angegeben werden.   
-Optional könnt Ihr auch die "def" Zeilen bearbeiten, je nachdem welche Icons, Farben etc Ihr für die jeweilige Notifikation haben wollt.
 
 ## Changelog Connector
-### V0.0.2 (09.04.2021)
+### V0.1.0 (17.04.2021)
 * Add: Notifications implementiert.
 * Init Beta
 ### V0.0.1 (01.04.2021)
@@ -50,7 +47,7 @@ Optional könnt Ihr auch die "def" Zeilen bearbeiten, je nachdem welche Icons, F
 
 
 ## Changelog Controller
-### V0.1.0 (14.04.2021)
+### V0.1.0 (17.04.2021)
 * Add: Init Beta
 ### V0.0.1 (01.04.2021)
 * Add: Init Alpa

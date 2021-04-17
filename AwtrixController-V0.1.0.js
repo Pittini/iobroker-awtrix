@@ -4,47 +4,89 @@ log("starting AwtrixControl V." + Version);
 
 //Datenpunkte
 const AwtrixMqttOid = "mqtt.0.Awtrix1"; //Hier die ObjektId zur Awtrix Mqtt ObjektId angeben
-const LuxOid = "wiffi-wz.0.root.192_168_2_131.w_lux"; // ObjektId für Aussenhelligkeitssensor wenn vorhanden, leer lassen wenn nicht vorhanden
+
 //setObject("AwtrixMqttOid", { type: 'channel', common: { name: "Awtrix" }, native: {} });
 
 const logging = true; //Soll Logging aktiviert werden?
 
 const ShowCombinedTempHum = true; //Soll Temperatur und Luftfeuchte zu einer Nachricht zusammengefasst werden?
 
-const ActivateBrightnessControl = true; //Soll die Helligkeit der Awtrix adaptiv nach Aussenhelligkeit gesteuert werden?
-let AwtrixBrightness = 25;
-let OldAtrixBrightness = AwtrixBrightness;
+const ActivateBrightnessControl = true; //Soll die Helligkeit der Awtrix adaptiv nach Aussenhelligkeit gesteuert werden? Macht nur Sinn wenn auch ein entsprechender Helligkeitssensor vorhanden ist!
 
 const InfoCycle1Refresh = 60 * 1000 * 2; //Zyklus1 Zeit, die letzte Zahl steht für die Minuten
-const InfoCycle2Refresh = 60 * 1000 * 4.5; //Zyklus2 Zeit, die letzte Zahl steht für die Minuten
+const InfoCycle2Refresh = 60 * 1000 * 5; //Zyklus2 Zeit, die letzte Zahl steht für die Minuten
 const InfoCycle3Refresh = 60 * 1000 * 60; //Zyklus3 Zeit, die letzte Zahl steht für die Minuten
+
+//Datenpunkte für noch verbleibende Tage bis Müllabfuhr (number), leer lassen wenn nicht vorhanden
+
+const TrashbinYellowOid = "javascript.0.vis.muellkalender.gelbe_tonne_tage";
+const TrashbinGreenOid = "javascript.0.vis.muellkalender.gruene_tonne_tage";
+const TrashbinBlackOid = "javascript.0.vis.muellkalender.schwarze_tonne_tage";
+const TrashbinBrownOid = "";
+const TrashbinCycle = 2; //In welchem Zyklus soll die Nachricht wiederholt werden? Gültige Werte sind 1, 2 oder 3
+
+//Datenpunkte für Temperatur und Luftfeuchtigkeit (number), leer lassen wenn nicht vorhanden
+const TempOutDoorOid = "wiffi-wz.0.root.192_168_2_131.w_temperatur";
+const TempIndoorOid = "linkeddevices.0.Klima.Wohnzimmer.temperature";
+const HumidityOutdoorOid = "wiffi-wz.0.root.192_168_2_131.w_feuchte_rel";
+const HumidityIndoorOid = "linkeddevices.0.Klima.Wohnzimmer.humidity";
+const ClimateCycle = 1; //In welchem Zyklus soll die Nachricht wiederholt werden? Gültige Werte sind 1, 2 oder 3
+
+//Datenpunkte für Alarme (true/false), leer lassen wenn nicht vorhanden
+const FireAlertOid = "javascript.0.Alarme.Feuer.Alarm"; //
+const WaterAlertOid = "javascript.0.Alarme.Wasser.Alarm";
+const GasAlertOid = "javascript.0.Alarme.Gas.Alarm";
+const CurrentfailAlertOid = "javascript.0.Alarme.Stromausfall.Alarm";
+const HeatingfailAlertOid = "";
+const AlertCycle = 1; //In welchem Zyklus soll die Nachricht wiederholt werden? Gültige Werte sind 1, 2 oder 3
+
+//Datenpunkt für Türklingelsignalisierung (true/false), leer lassen wenn nicht vorhanden
+const DoorbellOid = "zigbee.0.00158d000346cdda.contact";
+
+// Datenpunkt für Aussenhelligkeitssensor (number) wenn vorhanden, leer lassen wenn nicht vorhanden
+const LuxOid = "wiffi-wz.0.root.192_168_2_131.w_lux";
+
+
+
+
+// Ab hier nix mehr ändern
+
 
 let IntervalHandler1;
 let IntervalHandler2;
 let IntervalHandler3;
 
 let Brightness = 0;
+let AwtrixBrightness = 25;
+let OldAtrixBrightness = AwtrixBrightness;
 
-// Pfade
+
 let Notifications = {
     "trashbin": {
         "yellow": {
-            "oid": "javascript.0.vis.muellkalender.gelbe_tonne_tage",
+            "oid": TrashbinYellowOid,
             "def": { "name": "Muellabfuhr gelb", "force": false, "icon": 966, "moveIcon": false, "repeat": 2, "soundfile": 4, "text": "Gelbe Tonne!", "color": [255, 255, 0] },
             "value": null,
             "destination": AwtrixMqttOid + ".notify",
             "showit": true
         },
         "green": {
-            "oid": "javascript.0.vis.muellkalender.gruene_tonne_tage",
+            "oid": TrashbinGreenOid,
             "def": { "name": "Muellabfuhr gruen", "force": false, "icon": 981, "moveIcon": false, "repeat": 2, "soundfile": 5, "text": "Grüne Tonne!", "color": [0, 255, 0] },
             "value": null,
             "destination": AwtrixMqttOid + ".notify",
             "showit": true
         },
         "black": {
-            "oid": "javascript.0.vis.muellkalender.schwarze_tonne_tage",
+            "oid": TrashbinBlackOid,
             "def": { "name": "Muellabfuhr schwarz", "force": false, "icon": 964, "moveIcon": false, "repeat": 2, "soundfile": 5, "text": "Schwarze Tonne!", "color": [255, 255, 255] },
+            "value": null,
+            "destination": AwtrixMqttOid + ".notify",
+            "showit": true
+        },
+        "brown": {
+            "oid": TrashbinBrownOid,
+            "def": { "name": "Muellabfuhr braun", "force": false, "icon": 964, "moveIcon": false, "repeat": 2, "soundfile": 5, "text": "Braune Tonne!", "color": [255, 255, 255] },
             "value": null,
             "destination": AwtrixMqttOid + ".notify",
             "showit": true
@@ -52,7 +94,7 @@ let Notifications = {
     },
     "climate": {
         "tempoutdoor": {
-            "oid": "wiffi-wz.0.root.192_168_2_131.w_temperatur",
+            "oid": TempOutDoorOid,
             "def": { "name": "Temp", "force": false, "icon": 774, "moveIcon": false, "repeat": 2, "text": "Aussentemp.: ", "color": [0, 255, 0] },
             "value": null,
             "destination": AwtrixMqttOid + ".notify",
@@ -60,7 +102,7 @@ let Notifications = {
             "unit": "°C"
         },
         "tempindoor": {
-            "oid": "linkeddevices.0.Klima.Wohnzimmer.temperature",
+            "oid": TempIndoorOid,
             "def": { "name": "Temp", "force": false, "icon": 774, "moveIcon": false, "repeat": 2, "text": "Innentemp.: ", "color": [0, 255, 0] },
             "value": null,
             "destination": AwtrixMqttOid + ".notify",
@@ -68,7 +110,7 @@ let Notifications = {
             "unit": "°C"
         },
         "humidityoutdoor": {
-            "oid": "wiffi-wz.0.root.192_168_2_131.w_feuchte_rel",
+            "oid": HumidityOutdoorOid,
             "def": { "name": "Temp", "force": false, "icon": 774, "moveIcon": false, "repeat": 2, "text": "Luftfeuchte aussen: ", "color": [0, 255, 0] },
             "value": null,
             "destination": AwtrixMqttOid + ".notify",
@@ -76,7 +118,7 @@ let Notifications = {
             "unit": "%rH"
         },
         "humidityindoor": {
-            "oid": "linkeddevices.0.Klima.Wohnzimmer.humidity",
+            "oid": HumidityIndoorOid,
             "def": { "name": "Temp", "force": false, "icon": 774, "moveIcon": false, "repeat": 2, "text": "Luftfeuchte innen: ", "color": [0, 255, 0] },
             "value": null,
             "destination": AwtrixMqttOid + ".notify",
@@ -86,35 +128,35 @@ let Notifications = {
     },
     "alerts": {
         "fire": {
-            "oid": "javascript.0.Alarme.Feuer.Alarm",
+            "oid": FireAlertOid,
             "def": { "name": "Feueralarm", "force": true, "icon": 1149, "moveIcon": false, "repeat": 2, "soundfile": 3, "text": "Feueralarm!", "color": [255, 0, 0] },
             "value": false,
             "destination": AwtrixMqttOid + ".notify",
             "showit": true
         },
         "water": {
-            "oid": "javascript.0.Alarme.Wasser.Alarm",
+            "oid": WaterAlertOid,
             "def": { "name": "Wasseralarm", "force": true, "icon": 328, "moveIcon": false, "repeat": 2, "soundfile": 3, "text": "Wasseralarm!", "color": [255, 0, 0] },
             "value": false,
             "destination": AwtrixMqttOid + ".notify",
             "showit": true
         },
         "gas": {
-            "oid": "javascript.0.Alarme.Gas.Alarm",
+            "oid": GasAlertOid,
             "def": { "name": "Gasalarm", "force": true, "icon": 328, "moveIcon": false, "repeat": 2, "soundfile": 3, "text": "Gasalarm!", "color": [255, 0, 0] },
             "value": false,
             "destination": AwtrixMqttOid + ".notify",
             "showit": true
         },
         "current": {
-            "oid": "javascript.0.Alarme.Stromausfall.Alarm",
+            "oid": CurrentfailAlertOid,
             "def": { "name": "Stromausfall", "force": true, "icon": 328, "moveIcon": false, "repeat": 2, "soundfile": 3, "text": "Stromausfall!", "color": [255, 0, 0] },
             "value": false,
             "destination": AwtrixMqttOid + ".notify",
             "showit": true
         },
         "heating": {
-            "oid": "",
+            "oid": HeatingfailAlertOid,
             "def": { "name": "Heizungsausfall", "force": true, "icon": 375, "moveIcon": false, "repeat": 2, "soundfile": 3, "text": "Heizungsausfall!", "color": [255, 0, 0] },
             "value": false,
             "destination": AwtrixMqttOid + ".notify",
@@ -122,7 +164,7 @@ let Notifications = {
         }
     },
     "doorbell": {
-        "oid": "zigbee.0.00158d000346cdda.contact",
+        "oid": DoorbellOid,
         "def": { "name": "Tuerklingel", "force": true, "icon": 960, "moveIcon": false, "repeat": 2, "soundfile": 101, "text": "Türklingel", "color": [255, 0, 0] },
         "value": false,
         "destination": AwtrixMqttOid + ".notify",
@@ -241,20 +283,28 @@ function SetBrightness() {
 
 function InfoCycle1() {
     IntervalHandler1 = setInterval(function () { // 
-        ShowAlertNotifications();
-        ShowTempHum();
+        if (AlertCycle == 1) ShowAlertNotifications();
+        if (TrashbinCycle == 1) ShowTrashbinNotification();
+        if (ClimateCycle == 1) ShowTempHum();
+
+
     }, InfoCycle1Refresh); //
 }
 
 function InfoCycle2() {
     IntervalHandler2 = setInterval(function () { // 
-        ShowTrashbinNotification();
+        if (AlertCycle == 2) ShowAlertNotifications();
+        if (TrashbinCycle == 2) ShowTrashbinNotification();
+        if (ClimateCycle == 2) ShowTempHum();
 
     }, InfoCycle2Refresh); //
 }
 
 function InfoCycle3() {
     IntervalHandler3 = setInterval(function () { // 
+        if (AlertCycle == 3) ShowAlertNotifications();
+        if (TrashbinCycle == 3) ShowTrashbinNotification();
+        if (ClimateCycle == 3) ShowTempHum();
 
     }, InfoCycle3Refresh); //
 }

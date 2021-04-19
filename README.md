@@ -49,6 +49,8 @@ müßt Ihr im Einstellungsbereich eure Datenpunkte für die einzelnen Funktionen
 
 
 ## Changelog Controller
+### V0.1.1 (19.04.2021)
+* Fix: Aufgrund fehlerhafter Typo wurde humitidy nur bei Skriptstart aktualisiert.
 ### V0.1.0 (17.04.2021)
 * Add: Init Beta
 ### V0.0.1 (01.04.2021)
